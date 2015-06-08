@@ -1,9 +1,95 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
+	<title>Cat Training 101</title>
+	<link rel="stylesheet" href="/css/normalize.css">
+	<link rel="stylesheet" href="/css/box_sizing.css">
+	<link rel="stylesheet" href="/css/cat-training.css">
+
 </head>
 <body>
+	<div id="game-container">
+		<div id="score-box">
+		</div>
+		<img class="game-board" src="/img/apartment.jpeg" alt="Load image to see game area.">
+		<img id="nina" src="/img/nina.png" alt="Nina">
+		<div id="instructions-container">
+			<img src="/img/nina.png" alter="Nina">
+			<h1>Cat Training 101</h1>
+			<p>
+				This is Nina. She is a very poorly behaved cat. To help her learn what she's not allowed to do, we use a spray bottle. Every time Nina goes somwhere she's not allowed, spray her with water.
+			</p>
+			<p>
+				Every time you succeed in disciplining Nina, you get a point! BUT - if you spray Nina when she's not doing anything wrong, that's bad training, and you lose a point.
+			</p>
+			<button id="btn-start">START</button>
+		</div>
+	</div>
+
+	<script src="/js/jquery-2.1.4.min.js"></script>
+	<script>
+	(function() {
+		"use strict";
+
+		var game = {
+			randomNum: 0,
+			placeholder: 0,
+			locations: [
+				{
+					name:   "bookshelf",
+					top:        "10%",
+					left:       "5%"
+				},
+				{
+					name:   "counter1",
+					top:        "25%",
+					left:       "45%"
+				},
+				{
+					name:   "table",
+					top:        "35%",
+					left:       "80%"
+				}
+				,
+				{
+					name:   "stove",
+					top:        "7%",
+					left:       "24%"
+				}
+			],
+			getRandomInt: function() {
+				var placeholder = Math.floor(Math.random()*game.locations.length);
+				if (placeholder == game.randomNum) {
+					if (placeholder == game.locations.length - 1) {
+						placeholder --;
+					} else {
+						placeholder ++;
+					}
+				} 
+				return placeholder;
+			},
+			moveNina: function() {
+				setTimeout(function(){
+					game.randomNum = game.getRandomInt();
+					$("#nina").css("top", game.locations[game.randomNum].top);
+					$("#nina").css("left", game.locations[game.randomNum].left);
+					console.log(game.locations[game.randomNum].name);
+					if (true) {
+						game.moveNina();
+					} else {
+						console.log("something failed");
+					}
+				},2000);
+			},
+			init: function() {
+				console.log("init");
+				game.moveNina();
+			},
+		}
+		game.init();
+	})();
+
+	</script>
 
 </body>
 </html>

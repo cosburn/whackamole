@@ -1,0 +1,15 @@
+#game-container {
+	width: 95%;
+	max-width: 900px;
+	margin: 0 auto;
+	position: relative;
+}
+.game-board {
+	width: 100%;
+}
+#nina {
+	position: absolute;
+	top: 7%;
+	left: 24%;
+	width: 10%;
+}
