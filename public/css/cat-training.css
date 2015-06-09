@@ -2,14 +2,47 @@
 	width: 95%;
 	max-width: 900px;
 	margin: 0 auto;
+	margin-top: 25px;
 	position: relative;
+	cursor: url(/img/bottle.png),w-resize;
 }
 .game-board {
 	width: 100%;
 }
 #nina {
 	position: absolute;
-	top: 7%;
-	left: 24%;
+	top: -100px;
+	left: -100px;
 	width: 10%;
+}
+#instructions-container {
+	position: absolute;
+	top:12%;
+	left:15%;
+	width:70%;
+	background-color: #fff;
+	padding: 20px;
+	max-width: 700px;
+	font-size: 12px;
+}
+.thumb {
+	width:100px;
+}
+.right {
+	float:right;
+}
+.left {
+	float:left;
+}
+.center {
+	margin: 0 auto;
+}
+.btn {
+	border: none;
+	padding: 10px;
+	background color: #fafafa;
+	width:150px;
+}
+.invisible {
+	visibility: hidden;
 }

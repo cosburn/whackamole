@@ -13,18 +13,34 @@
 		</div>
 		<img class="game-board" src="/img/apartment.jpeg" alt="Load image to see game area.">
 		<img id="nina" src="/img/nina.png" alt="Nina">
-		<div id="instructions-container">
-			<img src="/img/nina.png" alter="Nina">
-			<h1>Cat Training 101</h1>
-			<p>
-				This is Nina. She is a very poorly behaved cat. To help her learn what she's not allowed to do, we use a spray bottle. Every time Nina goes somwhere she's not allowed, spray her with water.
-			</p>
-			<p>
-				Every time you succeed in disciplining Nina, you get a point! BUT - if you spray Nina when she's not doing anything wrong, that's bad training, and you lose a point.
-			</p>
-			<button id="btn-start">START</button>
+		<div id="instructions-container" class="">
+			<span id="instructions">
+				<h1>Cat Training 101</h1>
+				<img class="thumb left" src="/img/nina.png" alter="Nina">
+				<p>
+					This is Nina. She is a very poorly behaved cat. To help her learn what she's not allowed to do, use the spray bottle every time Nina goes somwhere she's not allowed.
+				</p>
+				<p>
+					Every time you succeed in disciplining Nina, you get a point! BUT - if you spray Nina when she's not doing anything wrong, that's bad training, and you lose a point.
+				</p>
+			</span>
+			<button id="btn-start" class="btn center">START</button>
 		</div>
 	</div>
+	<div>
+		<h2 class="left">Score: <span id="score">0</span></h2>
+		<h2 class="right">Wrong: <span id="wrong">0</span></h2>
+	</div>
+
+	<!-- audio elements -->
+	<audio id="snd-spray" src="/audio/spray.m4a"></audio>
+	<audio class="meow" id="meow1" src="/audio/meow1.mp3"></audio>
+	<audio class="meow" id="meow2" src="/audio/meow2.mp3"></audio>
+	<audio class="meow" id="meow3" src="/audio/meow3.mp3"></audio>
+	<audio class="meow" id="meow4" src="/audio/meow4.mp3"></audio>
+	<audio class="meow" id="meow5" src="/audio/meow5.wav"></audio>
+	<audio id="meow-angry" src="/audio/meow-angry.m4a"></audio>
+
 
 	<script src="/js/jquery-2.1.4.min.js"></script>
 	<script>
@@ -32,33 +48,74 @@
 		"use strict";
 
 		var game = {
+			playing: false,
+			score: 0,
+			wrong: 0,
+			gameOverInstructions: 
+					"<h1>GAME OVER</h1><img class='thumb left' src='/img/nina.png' alter='Nina'><p>You are a bad cat trainer. Just let your cat do whatever it wants, it won't make a difference anyway.</p><p>Play again?</p>",
+			sprayAudio: document.getElementById("snd-spray"),
 			randomNum: 0,
 			placeholder: 0,
+			location: "",
+			meows: $(".meow"),
 			locations: [
 				{
 					name:   "bookshelf",
-					top:        "10%",
-					left:       "5%"
+					top:    "10%",
+					left:   "5%",
+					bad:    true
 				},
 				{
-					name:   "counter1",
-					top:        "25%",
-					left:       "45%"
+					name:   "counter",
+					top:    "25%",
+					left:   "45%",
+					bad:    true
 				},
 				{
 					name:   "table",
-					top:        "35%",
-					left:       "80%"
-				}
-				,
+					top:    "35%",
+					left:   "80%",
+					bad:    true
+				},
 				{
 					name:   "stove",
-					top:        "7%",
-					left:       "24%"
+					top:    "7%",
+					left:   "24%",
+					bad:    true
+				},
+				{
+					name:   "trash",
+					top:    "33%",
+					left:   "55%",
+					bad:    true
+				},
+				{
+					name:   "floor1",
+					top:    "55%",
+					left:   "57%",
+					bad:    false
+				},
+				{
+					name:   "floor2",
+					top:    "65%",
+					left:   "65%",
+					bad:    false
+				},
+				{
+					name:   "chair",
+					top:    "67%",
+					left:   "19%",
+					bad:    false
+				},
+				{
+					name:   "stool",
+					top:    "34%",
+					left:   "27%",
+					bad:    false
 				}
 			],
-			getRandomInt: function() {
-				var placeholder = Math.floor(Math.random()*game.locations.length);
+			getRandomInt: function(min,max) {
+				var placeholder = Math.floor(Math.random()*(max-min)+min);
 				if (placeholder == game.randomNum) {
 					if (placeholder == game.locations.length - 1) {
 						placeholder --;
@@ -69,21 +126,61 @@
 				return placeholder;
 			},
 			moveNina: function() {
-				setTimeout(function(){
-					game.randomNum = game.getRandomInt();
-					$("#nina").css("top", game.locations[game.randomNum].top);
-					$("#nina").css("left", game.locations[game.randomNum].left);
-					console.log(game.locations[game.randomNum].name);
-					if (true) {
-						game.moveNina();
+					setTimeout(function(){
+						// while (game.playing == true) {
+							game.randomNum = game.getRandomInt(0,game.locations.length);
+							$("#nina").css("top", game.locations[game.randomNum].top);
+							$("#nina").css("left", game.locations[game.randomNum].left);
+							console.log(game.locations[game.randomNum].name);
+							if (game.playing == true) {
+								game.moveNina();
+							} else {
+								console.log("something failed");
+							}
+							game.location = game.locations[game.randomNum];
+						// }
+					},1000);
+			},
+			removeInstructions: function() {
+				$("#instructions-container").toggleClass("invisible");
+			},
+			gameOver: function() {
+				game.playing = false;
+				game.removeInstructions();
+				$("#instructions").html(game.gameOverInstructions);
+				game.score = 0;
+				game.wrong = 0;
+			},
+			listenForClicks: function() {
+				$("#nina").click(function() {
+					if (game.location.bad == true) {
+						game.score++;
 					} else {
-						console.log("something failed");
-					}
-				},2000);
+						game.wrong++;
+						if (game.wrong == 5) {
+							game.gameOver();
+						}
+					};
+					$("#score").text(game.score);
+					$("#wrong").text(game.wrong);
+					game.meows[game.getRandomInt(0,game.meows.length)].play();
+				});
+				$("#game-container").click(function(){
+					game.sprayAudio.play();
+				});
+			},
+			start: function() {
+				$("#btn-start").click(function() {
+					console.log("start clicked");
+					game.playing = true;
+					game.removeInstructions();
+					game.moveNina();
+					game.listenForClicks();
+				});
 			},
 			init: function() {
 				console.log("init");
-				game.moveNina();
+				game.start();
 			},
 		}
 		game.init();
